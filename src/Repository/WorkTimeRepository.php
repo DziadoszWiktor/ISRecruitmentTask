@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repository;
@@ -38,23 +39,34 @@ class WorkTimeRepository extends ServiceEntityRepository implements WorkTimeRepo
     }
 
     /**
-     * @param string $employeeId
-     * @param DateTimeInterface $day
-     * @return array
+     * @inheritDoc
      */
     public function findByEmployeeAndDay(string $employeeId, DateTimeInterface $day): array
     {
-        return [];
+        $qb = $this->createQueryBuilder('w')
+            ->join('w.employee', 'e')
+            ->andWhere('e.id = :employee_id')
+            ->andWhere('w.firstDayDate = :day')
+            ->setParameter('employee_id', $employeeId)
+            ->setParameter('day', $day->format('Y-m-d'));
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param string $employeeId
-     * @param DateTimeInterface $from
-     * @param DateTimeInterface $to
-     * @return array
+     * @inheritDoc
      */
     public function findByDateRange(string $employeeId, DateTimeInterface $from, DateTimeInterface $to): array
     {
-        return [];
+        $qb = $this->createQueryBuilder('w')
+            ->join('w.employee', 'e')
+            ->andWhere('e.id = :employee_id')
+            ->andWhere('w.startedAt >= :from')
+            ->andWhere('w.endedAt   <= :to')
+            ->setParameter('employee_id', $employeeId)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to);
+
+        return $qb->getQuery()->getResult();
     }
 }
