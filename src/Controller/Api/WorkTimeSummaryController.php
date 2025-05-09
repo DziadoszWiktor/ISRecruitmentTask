@@ -9,9 +9,11 @@ use App\Service\WorkTimeSummaryService;
 use DateMalformedStringException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-#[Route('/api/work-time-summary', name: 'work_time_summary', methods: ['GET'])]
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Uid\Uuid;
+
+#[Route('/api/work-time-summary', name: 'work_time_summary')]
 class WorkTimeSummaryController extends AbstractController
 {
     /**
@@ -36,25 +38,32 @@ class WorkTimeSummaryController extends AbstractController
         $date = $request->query->get('date');
 
         if (!$employeeId || !$date) {
-            return $this->json(['error' => 'Missing parameters: employeeId and date are required'], 400);
+            return $this->json(
+                ['error' => 'Missing parameters: employeeId and date are required'],
+                400
+            );
+        }
+
+        if (!Uuid::isValid($employeeId)) {
+            return $this->json(['error' => 'employeeId is not a valid UUID'], 400);
         }
 
         try {
-            if ($this->verifyDate('/^\d{4}-\d{2}$/', $date)) {
+            if ($this->matches('/^\d{4}-\d{2}$/', $date)) {
                 $data = $this->summaryService->summarizeMonth($employeeId, $date);
                 $response = [
-                    'standard_hours'   => $data['normal_hours'],
-                    'standard_rate'    => $data['normal_rate'],
-                    'overtime_hours'   => $data['overtime_hours'],
-                    'overtime_rate'    => $data['overtime_rate'],
-                    'total_amount'     => $data['total'],
+                    'standard_hours' => $data['normal_hours'],
+                    'standard_rate'  => $data['normal_rate'],
+                    'overtime_hours' => $data['overtime_hours'],
+                    'overtime_rate'  => $data['overtime_rate'],
+                    'total_amount'   => $data['total'],
                 ];
-            } elseif ($this->verifyDate('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            } elseif ($this->matches('/^\d{4}-\d{2}-\d{2}$/', $date)) {
                 $data = $this->summaryService->summarizeDay($employeeId, $date);
                 $response = [
-                    'hours'       => $data['hours'],
-                    'hourly_rate' => $data['rate'],
-                    'total_amount'=> $data['total'],
+                    'hours'        => $data['hours'],
+                    'hourly_rate'  => $data['rate'],
+                    'total_amount' => $data['total'],
                 ];
             } else {
                 throw new InvalidDateFormatException('Date format must be Y-m or Y-m-d');
@@ -73,8 +82,8 @@ class WorkTimeSummaryController extends AbstractController
      * @param string $date
      * @return bool
      */
-    private function verifyDate(string $pattern, string $date): bool
+    private function matches(string $pattern, string $date): bool
     {
-        return (bool)preg_match($pattern, $date);
+        return (bool) preg_match($pattern, $date);
     }
 }

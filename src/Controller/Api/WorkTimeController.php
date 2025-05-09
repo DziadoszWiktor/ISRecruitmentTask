@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Exception\DuplicatedWorkTimeException;
+use App\Exception\EmployeeNotFoundException;
 use App\Exception\WorkTimeExceededException;
 use App\Service\WorkTimeService;
 use DateTimeImmutable;
@@ -65,7 +66,7 @@ class WorkTimeController extends AbstractController
                 Response::HTTP_CREATED
             );
 
-        } catch (WorkTimeExceededException|DuplicatedWorkTimeException $e) {
+        } catch (WorkTimeExceededException|DuplicatedWorkTimeException|EmployeeNotFoundException $e) {
             return $this->json(
                 ['error' => $e->getMessage()],
                 Response::HTTP_BAD_REQUEST

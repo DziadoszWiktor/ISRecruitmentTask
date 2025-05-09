@@ -9,6 +9,9 @@ use App\Interface\WorkTimeRepositoryInterface;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Doctrine\DBAL\Types\Types;
 
 /**
  * @extends ServiceEntityRepository<WorkTime>
@@ -43,14 +46,14 @@ class WorkTimeRepository extends ServiceEntityRepository implements WorkTimeRepo
      */
     public function findByEmployeeAndDay(string $employeeId, DateTimeInterface $day): array
     {
-        $qb = $this->createQueryBuilder('w')
+        return $this->createQueryBuilder('w')
             ->join('w.employee', 'e')
             ->andWhere('e.id = :employee_id')
             ->andWhere('w.firstDayDate = :day')
-            ->setParameter('employee_id', $employeeId)
-            ->setParameter('day', $day->format('Y-m-d'));
-
-        return $qb->getQuery()->getResult();
+            ->setParameter('employee_id', Uuid::fromString($employeeId), UuidType::NAME)
+            ->setParameter('day', $day, Types::DATE_IMMUTABLE)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
@@ -58,15 +61,15 @@ class WorkTimeRepository extends ServiceEntityRepository implements WorkTimeRepo
      */
     public function findByDateRange(string $employeeId, DateTimeInterface $from, DateTimeInterface $to): array
     {
-        $qb = $this->createQueryBuilder('w')
+        return $this->createQueryBuilder('w')
             ->join('w.employee', 'e')
             ->andWhere('e.id = :employee_id')
             ->andWhere('w.startedAt >= :from')
             ->andWhere('w.endedAt   <= :to')
-            ->setParameter('employee_id', $employeeId)
-            ->setParameter('from', $from)
-            ->setParameter('to', $to);
-
-        return $qb->getQuery()->getResult();
+            ->setParameter('employee_id', Uuid::fromString($employeeId), UuidType::NAME)
+            ->setParameter('from', $from, Types::DATETIME_IMMUTABLE)
+            ->setParameter('to',   $to,   Types::DATETIME_IMMUTABLE)
+            ->getQuery()
+            ->getResult();
     }
 }

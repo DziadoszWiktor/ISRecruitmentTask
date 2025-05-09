@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "4dbdf8fe-7bb3-43f1-8193-fabdb743a609",
+		"name": "IS - Recruitment task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44762908",
+		"_collection_link": "https://wiktordziadosz-1321960.postman.co/workspace/Wiktor-Dziadosz's-Workspace~4a90722e-8cf1-40ed-86ff-e45d944043e8/collection/44762908-4dbdf8fe-7bb3-43f1-8193-fabdb743a609?action=share&source=collection_link&creator=44762908"
+	},
+	"item": [
+		{
+			"name": "IS - Create Employee",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Karol\",\r\n  \"lastName\":  \"Szabat\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://innovationsoftwarerecruitmenttasktry.ddev.site:8443/api/employee",
+					"protocol": "https",
+					"host": [
+						"innovationsoftwarerecruitmenttasktry",
+						"ddev",
+						"site"
+					],
+					"port": "8443",
+					"path": [
+						"api",
+						"employee"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IS - Add employee work time",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"employeeId\":\"0196b5d5-66b0-71b0-b7c6-9b43d677585f\",\r\n  \"startedAt\":\"2025-05-16 08:00\",\r\n  \"endedAt\":\"2025-05-16 16:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://isrecruitmenttask.ddev.site:8443/api/work-times",
+					"protocol": "https",
+					"host": [
+						"isrecruitmenttask",
+						"ddev",
+						"site"
+					],
+					"port": "8443",
+					"path": [
+						"api",
+						"work-times"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IS - Work time summary",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"unikalny identyfikator pracownika\": 1,\r\n  \"data\": \"01.01.1970\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://innovationsoftwarerecruitmenttasktry.ddev.site:8443/api/summary/day",
+					"protocol": "https",
+					"host": [
+						"innovationsoftwarerecruitmenttasktry",
+						"ddev",
+						"site"
+					],
+					"port": "8443",
+					"path": [
+						"api",
+						"summary",
+						"day"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
