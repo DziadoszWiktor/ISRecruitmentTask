@@ -38,22 +38,22 @@ class WorkTimeSummaryService
             throw new InvalidArgumentException('Invalid date format, expected Y-m-d');
         }
 
-        $entries      = $this->workTimeRepository->findByEmployeeAndDay($employeeId, $day);
+        $entries = $this->workTimeRepository->findByEmployeeAndDay($employeeId, $day);
         $totalMinutes = 0;
 
         foreach ($entries as $entry) {
-            $interval      = $entry->getEndedAt()->getTimestamp() - $entry->getStartedAt()->getTimestamp();
+            $interval = $entry->getEndedAt()->getTimestamp() - $entry->getStartedAt()->getTimestamp();
             $totalMinutes += intdiv($interval, 60);
         }
 
         $hours = $this->roundToHalfHours($totalMinutes);
-        $rate  = $this->config->getHourlyRate();
+        $rate = $this->config->getHourlyRate();
         $total = $hours * $rate;
 
         return [
             'hours' => $hours,
             'total' => $total,
-            'rate'  => $rate,
+            'rate' => $rate,
         ];
     }
 
@@ -75,28 +75,28 @@ class WorkTimeSummaryService
 
         $to = $from->modify('first day of next month')->modify('-1 second');
 
-        $entries      = $this->workTimeRepository->findByDateRange($employeeId, $from, $to);
+        $entries = $this->workTimeRepository->findByDateRange($employeeId, $from, $to);
         $totalMinutes = 0;
 
         foreach ($entries as $entry) {
-            $interval      = $entry->getEndedAt()->getTimestamp() - $entry->getStartedAt()->getTimestamp();
+            $interval = $entry->getEndedAt()->getTimestamp() - $entry->getStartedAt()->getTimestamp();
             $totalMinutes += intdiv($interval, 60);
         }
 
-        $totalHours   = $this->roundToHalfHours($totalMinutes);
-        $norm         = $this->config->getNormHours();
-        $hourly       = $this->config->getHourlyRate();
+        $totalHours = $this->roundToHalfHours($totalMinutes);
+        $norm = $this->config->getNormHours();
+        $hourly = $this->config->getHourlyRate();
         $overtimeRate = $hourly * $this->config->getOvertimeMultiplier();
 
-        $normalHours   = min($totalHours, $norm);
+        $normalHours = min($totalHours, $norm);
         $overtimeHours = max(0.0, $totalHours - $norm);
 
         return [
-            'normal_hours'  => $normalHours,
+            'normal_hours' => $normalHours,
             'overtime_hours'=> $overtimeHours,
-            'normal_rate'   => $hourly,
+            'normal_rate' => $hourly,
             'overtime_rate' => $overtimeRate,
-            'total'         => $normalHours * $hourly + $overtimeHours * $overtimeRate,
+            'total' => $normalHours * $hourly + $overtimeHours * $overtimeRate,
         ];
     }
 
