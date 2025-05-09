@@ -13,15 +13,23 @@ use InvalidArgumentException;
 
 class WorkTimeSummaryService
 {
+    /**
+     * WorkTimeSummaryService construct
+     *
+     * @param WorkTimeRepositoryInterface $workTimeRepository
+     * @param WorkTimeConfig $config
+     */
     public function __construct(
         private readonly WorkTimeRepositoryInterface $workTimeRepository,
         private readonly WorkTimeConfig              $config,
     ) {}
 
     /**
-     * Podsumowanie jednego dnia.
+     * Summarize day
      *
-     * @return array{hours: float, total: float, rate: float}
+     * @param string $employeeId
+     * @param string $dateString
+     * @return array
      */
     public function summarizeDay(string $employeeId, string $dateString): array
     {
@@ -50,10 +58,13 @@ class WorkTimeSummaryService
     }
 
     /**
-     * Podsumowanie miesiąca.
+     * Summarize month
      *
-     * @return array{normal_hours: float, overtime_hours: float, normal_rate: float, overtime_rate: float, total: float}
-     * @throws InvalidDateFormatException|DateMalformedStringException
+     * @param string $employeeId
+     * @param string $monthString
+     * @return array
+     * @throws DateMalformedStringException
+     * @throws InvalidDateFormatException
      */
     public function summarizeMonth(string $employeeId, string $monthString): array
     {
@@ -89,7 +100,12 @@ class WorkTimeSummaryService
         ];
     }
 
-    /** Zaokrąglenie czasu do 0,5 h. */
+    /**
+     * Hour round system
+     *
+     * @param int $minutes
+     * @return float
+     */
     private function roundToHalfHours(int $minutes): float
     {
         return round($minutes / 30) * 0.5;
